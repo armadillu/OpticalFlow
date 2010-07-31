@@ -11,7 +11,7 @@
 
 #include "cv.h"
 
-#define	MAX_FEATURES	400
+#define	MAX_FEATURES	500
 
 
 typedef struct{	float x; float y; }p2;
@@ -33,8 +33,10 @@ class OpticalFlow{
 		void setMinDist( float dist );
 		float getMinDist();
 		
-		void setNumFeatures( int num );
-		int getNumFeatures();
+		void setNumFeatures( int num );	//features to look for
+		int getNumFeatures();			
+
+		int getFoundNumFeatures();	//number of features returned by opencv
 
 		void setWindowSize( int winSize );
 		int getWindowSize();
@@ -42,7 +44,8 @@ class OpticalFlow{
 		void setEqualize( bool eq );
 		bool getEqualize();
 
-		void setCorrelate( bool corr );
+		void setCorrelate( bool corr );	//correlate cross-finds the current motion vectors
+										//with the previous ones, so indexes stay consistent
 		bool getCorrelate();
 
 		flow* getResults();
@@ -61,6 +64,8 @@ class OpticalFlow{
 	
 		int		windowSize;
 		int		numFeaturesToTrack;
+		int		numFoundFeatures;
+	
 		float	quality;
 		float	minDist;
 	

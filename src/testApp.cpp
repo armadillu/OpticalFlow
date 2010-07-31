@@ -4,19 +4,31 @@
 //--------------------------------------------------------------
 void testApp::setup(){
 
+	ofSetVerticalSync(true );
+	ofEnableAlphaBlending();
+	ofEnableSmoothing();
 
 	#ifdef _USE_LIVE_VIDEO
         vidGrabber.setVerbose(true);
-        vidGrabber.initGrabber(320,240);
+        vidGrabber.initGrabber(CAM_WIDTH,CAM_HEIGHT);
+		vidGrabber.setDesiredFrameRate(60);
 	#else
         vidPlayer.loadMovie("fingers.mov");
         vidPlayer.play();
 	#endif
 
-    colorImg.allocate(320,240);
-	grayImage.allocate(320,240);
+    colorImg.allocate(CAM_WIDTH,CAM_HEIGHT);
+	grayImage.allocate(CAM_WIDTH,CAM_HEIGHT);
 	
-	opticalFlow = new OpticalFlow(320, 240);
+	opticalFlow = new OpticalFlow(PROCESSING_WIDTH, PROCESSING_HEIGHT);
+	opticalFlow->setMinDist(7);
+	opticalFlow->setQuality(0.001);
+	opticalFlow->setNumFeatures(100);
+	opticalFlow->setEqualize(false);
+	opticalFlow->setCorrelate(false);
+	opticalFlow->setWindowSize(20);
+	
+	ofSetWindowShape(4 * PROCESSING_WIDTH, 2 * PROCESSING_HEIGHT);
 }
 
 //--------------------------------------------------------------
@@ -37,9 +49,9 @@ void testApp::update(){
 	if (bNewFrame){
 
 		#ifdef _USE_LIVE_VIDEO
-            colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+            colorImg.setFromPixels(vidGrabber.getPixels(), CAM_WIDTH,CAM_HEIGHT);
 	    #else
-            colorImg.setFromPixels(vidPlayer.getPixels(), 320,240);
+            colorImg.setFromPixels(vidPlayer.getPixels(), CAM_WIDTH,CAM_HEIGHT);
         #endif
 
         grayImage = colorImg;
@@ -52,37 +64,35 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
 
-	// draw the incoming, the grayscale, the bg and the thresholded difference
+	glScalef(2, 2, 1);
+	
 	ofSetColor(0xffffff);
-	colorImg.draw(0,0);
-	grayImage.draw(320,00);
-
-	// then draw the contours:
-
+	colorImg.draw(0,0, PROCESSING_WIDTH, PROCESSING_HEIGHT);
+	grayImage.draw(PROCESSING_WIDTH,0, PROCESSING_WIDTH, PROCESSING_HEIGHT);
 	
 	ofSetColor(0xff0000);
 	
-	int n = opticalFlow->getNumFeatures();
+	int n = opticalFlow->getFoundNumFeatures();
 	flow * of = opticalFlow->getResults();
 	
-	glTranslatef(320, 0, 0);
+	glLineWidth(1);
+	glTranslatef(PROCESSING_WIDTH, 0, 0);
 	glBegin(GL_LINES);
+	
 	for (int i = 0; i< n; i++){	
-
 		//ofLine(of[i].origin.x, of[i].origin.y, of[i].destination.x, of[i].destination.y);
-		glColor3ub(0, 255, 0);
+		glColor4ub(0, 255, 0, 0);
 		glVertex2f(of[i].origin.x, of[i].origin.y);
 		
-		glColor3ub(255, 0, 0);
+		glColor4ub(0, 255, 0, 255);
 		glVertex2f(of[i].destination.x, of[i].destination.y);
 	}
 	glEnd();
 
-
 	ofSetColor(0xffffff);
 	char reportStr[1024];
 	sprintf(reportStr, "fps: %f", ofGetFrameRate());
-	ofDrawBitmapString(reportStr, 20, 600);
+	ofDrawBitmapString(reportStr, 20, 20);
 
 }
 
@@ -92,10 +102,11 @@ void testApp::keyPressed  (int key){
 
 	switch (key){
 			
-		case 'f':
-			ofSetFullscreen(true);
+		case 's':
+			#ifdef _USE_LIVE_VIDEO
+			vidGrabber.videoSettings();
+			#endif
 			break;
-
 	}
 }
 
@@ -113,11 +124,9 @@ void testApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
-
 }
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-
 }
 

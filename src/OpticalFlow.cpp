@@ -25,10 +25,10 @@ OpticalFlow::OpticalFlow(int w_, int h_){
 	
 	equalize = false;
 	correlate = false;
-	windowSize = 10;
+	windowSize = 20;
 	numFeaturesToTrack = 100;
-	quality = 0.002;
-	minDist = 5.0;
+	quality = 0.001;
+	minDist = 7.0;
 	
 	zeroPoint.x = zeroPoint.y = 0;
 	
@@ -84,6 +84,8 @@ void OpticalFlow::update(IplImage * newImg){
 						  );
 	
 //	printf("after # %d numFeatures \n", numFeatures);
+	
+	numFoundFeatures = numFeatures;
 	
 	cvCalcOpticalFlowPyrLK(
 							currentImg,
@@ -163,7 +165,13 @@ float OpticalFlow::getQuality(){ return quality; }
 void OpticalFlow::setMinDist( float dist ) { minDist = dist; }
 float OpticalFlow::getMinDist() {return minDist; }
 
-void OpticalFlow::setNumFeatures( int num ){ numFeaturesToTrack = num; }
+void OpticalFlow::setNumFeatures( int num ){ 
+	if (num < MAX_FEATURES )
+		numFeaturesToTrack = num;
+	else
+		numFeaturesToTrack = MAX_FEATURES;
+}
+
 int OpticalFlow::getNumFeatures(){ return numFeaturesToTrack; }
 
 void OpticalFlow::setWindowSize( int winSize ){ windowSize = winSize; }
@@ -174,5 +182,7 @@ bool OpticalFlow::getEqualize(){ return equalize; }
 
 void OpticalFlow::setCorrelate( bool corr ){ correlate = corr; }
 bool OpticalFlow::getCorrelate(){ return correlate; }
+
+int OpticalFlow::getFoundNumFeatures(){ return numFoundFeatures; }
 
 flow* OpticalFlow::getResults(){ return &results[0]; }
