@@ -10,12 +10,9 @@
 #pragma once
 
 #include "cv.h"
+#include "simpleTypes.h"
 
 #define	MAX_FEATURES	500
-
-
-typedef struct{	float x; float y; }p2;
-typedef struct{ p2 origin; p2 destination; p2 direction; }flow;
 
 
 class OpticalFlow{
@@ -65,6 +62,7 @@ class OpticalFlow{
 		int		windowSize;
 		int		numFeaturesToTrack;
 		int		numFoundFeatures;
+		int		prevNumFoundFeatures;
 	
 		float	quality;
 		float	minDist;

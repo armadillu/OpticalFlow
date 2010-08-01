@@ -8,8 +8,8 @@
 #define _USE_LIVE_VIDEO		// uncomment this to use a live camera
 								// otherwise, we'll use a movie file
 
-#define CAM_WIDTH				640
-#define CAM_HEIGHT				480
+#define CAM_WIDTH				320
+#define CAM_HEIGHT				240
 #define PROCESSING_WIDTH		320
 #define PROCESSING_HEIGHT		240
 
@@ -38,6 +38,8 @@ class testApp : public ofBaseApp{
 
         ofxCvGrayscaleImage 	grayImage;
 		OpticalFlow	*			opticalFlow;
+	
+		ofColor	colors[MAX_FEATURES];
 		
 };
 

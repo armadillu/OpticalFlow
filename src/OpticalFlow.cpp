@@ -134,7 +134,7 @@ void OpticalFlow::update(IplImage * newImg){
 			
 			float min = FLT_MAX;
 			int index = 0;
-			for( int j=i+1; j<numFeaturesToTrack; j++ ) {
+			for( int j=i+1; j<prevNumFoundFeatures; j++ ) {
 				float dist = sqrtf( powf( results[i].origin.x - newResults[j].origin.x, 2.0) + powf( results[i].origin.y - newResults[j].origin.y, 2.0) );
 				if (dist < min){
 					min = dist;
@@ -154,6 +154,7 @@ void OpticalFlow::update(IplImage * newImg){
 		}
 	}
 	
+	prevNumFoundFeatures = numFoundFeatures;
 	cvCopy(currentImg, prevImg);
 	
 }
