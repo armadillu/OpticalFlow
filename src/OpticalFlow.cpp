@@ -36,6 +36,7 @@ OpticalFlow::OpticalFlow(int w_, int h_){
 		newResults[i].origin = results[i].origin = zeroPoint;
 		newResults[i].destination = results[i].destination = zeroPoint;
 		newResults[i].direction = results[i].direction = zeroPoint;
+		newResults[i].len = results[i].len = 0.0f;
 	}
 	
 }
@@ -122,6 +123,7 @@ void OpticalFlow::update(IplImage * newImg){
 		newResults[i].destination = pa;
 		newResults[i].direction.x = pa.x - pb.x;	//to check!
 		newResults[i].direction.y = pa.y - pb.y;
+		newResults[i].len = sqrtf( newResults[i].direction.x * newResults[i].direction.x + newResults[i].direction.y * newResults[i].direction.y );
 		
 	}
 	

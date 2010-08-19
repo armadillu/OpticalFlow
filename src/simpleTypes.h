@@ -12,7 +12,7 @@
 
 
 typedef struct{	float x; float y; }p2;
-typedef struct{ p2 origin; p2 destination; p2 direction; }flow;
+typedef struct{ p2 origin; p2 destination; p2 direction; float len;}flow;
 
 
 #endif
